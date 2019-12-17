@@ -1,6 +1,5 @@
 from pymisp import PyMISP
-from keys import misp_url, misp_key, misp_verifycert
-import argparse
+from keys import misp_verifycert
 import os
 import json
 
@@ -22,17 +21,11 @@ def download_last(m, last, out=None):
             f.write(json.dumps(result['response']))
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Download latest events from a MISP instance.')
-    parser.add_argument("-l", "--last", required=True, help="can be defined in days, hours, minutes (for example 5d or 12h or 30m).")
-    parser.add_argument("-o", "--output", help="Output file")
-
-    args = parser.parse_args()
-
-    if args.output is not None and os.path.exists(args.output):
+def fetch(misp_url, misp_key):
+    if os.path.exists('events.txt'):
         print('Output file already exists, aborting..')
         exit(0)
 
     misp = init(misp_url, misp_key)
 
-    download_last(misp, args.last, args.output)
+    download_last(misp, '1d', 'events.txt')
